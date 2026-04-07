@@ -14,6 +14,7 @@ machine language instructions that correspond to your source code statements.
 the function library to create the final executable program.
 * This is the progression from *source code* to *object code* to *executable program*:
 <br/>
+
 1. Use editor to **write source code**
 
 2. **Compile source code** file to produce object code
