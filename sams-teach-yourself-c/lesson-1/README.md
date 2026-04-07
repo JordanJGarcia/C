@@ -13,7 +13,7 @@ machine language instructions that correspond to your source code statements.
 * ***Linking*** is the process of combining your object code from compiling your source code file with object code from
 the function library to create the final executable program.
 
-## Progression from *source code* to *object code* to *executable program*
+#### Progression from *source code* to *object code* to *executable program*
 
 1. Use editor to **write source code**
 
