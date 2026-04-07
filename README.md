@@ -1,1 +1,1 @@
-# C programming practice, arranged by textbooks
+C programming practice, arranged by textbooks
