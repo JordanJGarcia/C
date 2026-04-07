@@ -1,5 +1,5 @@
 /*
- * Name(sizeof.c
+ * Name: sizeof.c
  * Desc:
  *      Display sizes of different C variable types in bytes.
 */
