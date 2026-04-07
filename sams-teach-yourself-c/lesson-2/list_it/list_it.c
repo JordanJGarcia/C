@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    line = (1);
+    line = 1;
 
     while (fgets(buffer, BUFF_SIZE, fp) != NULL)
         fprintf(stdout, "%4d\t%s", line++, buffer);
