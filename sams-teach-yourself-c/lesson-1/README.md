@@ -12,8 +12,8 @@ machine language instructions that correspond to your source code statements.
     - The disk file containing them is called an *object file*
 * ***Linking*** is the process of combining your object code from compiling your source code file with object code from
 the function library to create the final executable program.
+
 * This is the progression from *source code* to *object code* to *executable program*:
-<br/>
 
 1. Use editor to **write source code**
 
