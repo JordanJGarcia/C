@@ -8,12 +8,7 @@
 
 #define MAX 10
 
-/* 
- * position can be:
- *      -1 for end of list, or
- *      numerical position desired in list, if bigger than list size, its placed at the end.
-*/
-int
+los_t
 add_to_dll(const int value, DLL_NODE **head, int position)
 {
     DLL_NODE *new = NULL;
@@ -21,10 +16,7 @@ add_to_dll(const int value, DLL_NODE **head, int position)
 
     /* new link to add */
     if ((new = (DLL_NODE*) malloc(sizeof(DLL_NODE))) == NULL)
-    {
-        fprintf(stderr, "Could not allocate memory\n");
-        return MEMORY_ERROR;
-    }
+        return MAKE_LOS_STATE(ERROR, MEMORY_ERROR, "could not allocate memory", NO_RESULT);
 
     /* copy data */
     new->value = value;
@@ -37,7 +29,7 @@ add_to_dll(const int value, DLL_NODE **head, int position)
         (*head) = new;
         if (link) link->prev = new;
 
-        return EXIT_SUCCESS;
+        return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "added to front", value);
     }
 
     /* add to end of list */
@@ -53,17 +45,17 @@ add_to_dll(const int value, DLL_NODE **head, int position)
     if (link->next) link->next->prev = new;
     link->next = new;
 
-    return EXIT_SUCCESS;
+    return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "added", value);
 }
 
 
-int
+los_t
 del_val_from_dll(const int value, DLL_NODE **head)
 {
     DLL_NODE *node = *head;
     DLL_NODE *next = node->next;
 
-    if (!node) return LIST_EMPTY;
+    if (!node) return MAKE_LOS_STATE(NOERROR, EMPTY, "list empty", NO_RESULT);
 
     /* delete first node */
     if (value == node->value)
@@ -72,39 +64,41 @@ del_val_from_dll(const int value, DLL_NODE **head)
         if (*head) (*head)->prev = NULL;
         free(node);
 
-        return EXIT_SUCCESS;
+        return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "deleted first node", value);
     }
 
     /* delete any other node */
     for (; next && next->value != value; node = next, next = (node ? node->next : NULL)) ;
 
     if (!next)
-        return VALUE_NOT_FOUND;
+        return MAKE_LOS_STATE(ERROR, NOT_FOUND, "value not found", value);
 
     if (next->next) next->next->prev = node;
     node->next = next->next;
     free(next);
 
-    return EXIT_SUCCESS;
+    return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "deleted", value);
 }
 
 
-int
+los_t
 del_pos_from_dll(const int position, DLL_NODE **head)
 {
     int i = 1;
     DLL_NODE *node = *head;
+    int deleted;
 
-    if (!node) return LIST_EMPTY;
+    if (!node) return MAKE_LOS_STATE(NOERROR, EMPTY, "list empty", NO_RESULT);
 
     /* delete first node */
     if (position == 1 || (position == -1 && !node->next))
     {
+        deleted = node->value;
         (*head) = node->next;
         if(*head) (*head)->prev = NULL;
         free(node);
 
-        return EXIT_SUCCESS;
+        return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "deleted first node", deleted);
     }
 
     /* delete from end of list */
@@ -116,19 +110,24 @@ del_pos_from_dll(const int position, DLL_NODE **head)
         for (; node->next && i < position; i++, node = node->next) ;
 
     if (i < position || position < -1)
-        return OUT_OF_RANGE;
+        return MAKE_LOS_STATE(ERROR, OUT_OF_RANGE, "position out of range", NO_RESULT);
 
+    deleted = node->value;
     if (node->next) node->next->prev = node->prev;
     node->prev->next = node->next;
     free(node);
 
-    return EXIT_SUCCESS;
+    return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "deleted", deleted);
 }
 
-void
+los_t
 empty_dll(DLL_NODE **head)
 {
-    while (del_pos_from_dll(1, head) != LIST_EMPTY) ;
+    los_t result;
+
+    do result = del_pos_from_dll(1, head); while (result.rc != EMPTY);
+
+    return MAKE_LOS_STATE(NOERROR, EXIT_SUCCESS, "list emptied", NO_RESULT);
 }
 
 bool
